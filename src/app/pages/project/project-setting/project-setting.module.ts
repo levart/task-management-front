@@ -13,6 +13,11 @@ import {MatTableModule} from "@angular/material/table";
 import { BoardAddEditComponent } from './containers/board-add-edit/board-add-edit.component';
 import {MatInputModule} from "@angular/material/input";
 import {ReactiveFormsModule} from "@angular/forms";
+import {MatDialogModule} from "@angular/material/dialog";
+import { IssueTypeAddEditComponent } from './containers/issue-type-add-edit/issue-type-add-edit.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {UserModule} from "../../user/user.module";
 
 
 @NgModule({
@@ -22,6 +27,7 @@ import {ReactiveFormsModule} from "@angular/forms";
     IssueTypesComponent,
     ProjectUsersComponent,
     BoardAddEditComponent,
+    IssueTypeAddEditComponent,
   ],
   imports: [
     CommonModule,
@@ -31,7 +37,11 @@ import {ReactiveFormsModule} from "@angular/forms";
     MatSelectModule,
     MatTableModule,
     MatInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    UserModule
   ]
 })
 export class ProjectSettingModule { }

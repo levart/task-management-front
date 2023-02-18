@@ -6,7 +6,7 @@ import {
   HttpInterceptor
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {ProjectFacade} from "../../facades/project.service";
+import {ProjectFacade} from "../../facades/project.facade";
 
 @Injectable()
 export class ProjectInterceptor implements HttpInterceptor {

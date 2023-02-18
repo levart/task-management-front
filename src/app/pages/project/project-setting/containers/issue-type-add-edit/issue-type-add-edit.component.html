@@ -1,0 +1,57 @@
+<div>
+  <form [formGroup]="form">
+    <div class="form-container">
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput placeholder="Name" formControlName="name">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Description</mat-label>
+        <input matInput placeholder="Description" formControlName="description">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Description</mat-label>
+        <mat-select formControlName="type">
+          <mat-option *ngFor="let issueType of issueTypes" [value]="issueType">
+            {{issueType}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Color</mat-label>
+        <input matInput placeholder="Color" formControlName="color" type="color">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Icon</mat-label>
+        <input matInput placeholder="Icon" formControlName="icon">
+      </mat-form-field>
+
+
+      <button mat-raised-button color="primary" (click)="addColumn()">Add Field</button>
+      <button mat-raised-button color="primary" (click)="save()">Save</button>
+
+
+    </div>
+
+    <div class="columns" formArrayName="issueTypeColumns">
+      <div *ngFor="let column of columnsFormArray.controls; let i = index" class="item">
+        <div [formGroupName]="i">
+          <mat-form-field>
+            <mat-label>Name</mat-label>
+            <input matInput placeholder="Name" formControlName="name">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Field Name</mat-label>
+            <input matInput placeholder="Description" formControlName="filedName">
+          </mat-form-field>
+
+          <mat-checkbox class="example-margin" formControlName="isRequired">Is required</mat-checkbox>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>

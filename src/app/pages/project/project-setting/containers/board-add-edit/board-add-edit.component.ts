@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ETaskStatus} from "../../../../../core/enums/task-status.enum";
 import {BoardService} from "../../../../../core/services/board.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-board-add-edit',
@@ -12,6 +12,7 @@ import {Router} from "@angular/router";
 export class BoardAddEditComponent implements OnInit {
 
   form: FormGroup = new FormGroup({
+    id: new FormControl(null),
     name: new FormControl(null, Validators.required),
     position: new FormControl(1, Validators.required),
     description: new FormControl(null, Validators.required),
@@ -19,16 +20,39 @@ export class BoardAddEditComponent implements OnInit {
   })
   taskStatuses = Object.values(ETaskStatus);
 
+  boardId!: number;
+
   get columnsFormArray() {
     return this.form.get('columns') as FormArray;
   }
 
   constructor(
     private readonly boardService: BoardService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      if (params['id']) {
+        this.boardId = +params['id'];
+        this.getBoard()
+      }
+    })
+  }
+
+  getBoard() {
+    this.boardService.getBoard(this.boardId).subscribe(res => {
+      this.form.patchValue(res)
+      res.columns.forEach(column => {
+        this.columnsFormArray.push(new FormGroup({
+          name: new FormControl(column.name, Validators.required),
+          description: new FormControl(column.description, Validators.required),
+          position: new FormControl(column.position, Validators.required),
+          taskStatus: new FormControl(column.taskStatus, Validators.required)
+        }, Validators.required));
+      })
+    })
   }
 
   addColumn() {
@@ -46,12 +70,18 @@ export class BoardAddEditComponent implements OnInit {
     if (this.form.invalid) {
       return;
     }
-    console.log(this.form.value)
+    if (this.boardId) {
+      this.boardService.updateBoard(this.form.value)
+        .subscribe( res => {
+          this.router.navigate(['/projects/setting/boards']).then()
+        })
+    } else {
+      this.boardService.createBoard(this.form.value)
+        .subscribe( res => {
+          this.router.navigate(['/projects/setting/boards']).then()
+        })
+    }
 
-    this.boardService.createBoard(this.form.value)
-      .subscribe( res => {
-        console.log(res)
-        this.router.navigate(['/projects/setting/boards']).then()
-      })
+
   }
 }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {ProjectFacade} from "../../../../../facades/project.service";
+import {ProjectFacade} from "../../../../../facades/project.facade";
 import {IProject} from "../../../../../core/interfaces/project";
 
 @Component({

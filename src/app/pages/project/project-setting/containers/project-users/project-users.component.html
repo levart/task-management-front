@@ -1,1 +1,60 @@
-<p>project-users works!</p>
+<div>
+  <button mat-raised-button color="primary" (click)="chooseUser()">Choose User</button>
+</div>
+
+<div *ngIf="chooseUserActive">
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <mat-label>Choose User</mat-label>
+      <mat-select formControlName="userId">
+        <mat-option *ngFor="let user of users$ | async" [value]="user.id">
+          {{user.firstName}} {{user.lastName}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-raised-button color="primary" type="submit">Submit</button>
+    <mat-divider></mat-divider>
+    <button mat-raised-button color="primary" type="submit" (click)="addNewUser()">Add new User</button>
+  </form>
+</div>
+
+<div class="container">
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef> # </th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="firstName">
+      <th mat-header-cell *matHeaderCellDef> First Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="lastName">
+      <th mat-header-cell *matHeaderCellDef> Last Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.lastName}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="createdAt">
+      <th mat-header-cell *matHeaderCellDef> Created at </th>
+      <td mat-cell *matCellDef="let element"> {{element.createdAt}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>  </th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-raised-button color="warn" (click)="delete(element.id)">Delete</button>
+      </td>
+    </ng-container>
+
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>

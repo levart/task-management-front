@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AuthFacade} from "../../../facades/auth.service";
 import {ProjectService} from "../../../core/services/project.service";
 import {IProject} from "../../../core/interfaces/project";
-import {ProjectFacade} from "../../../facades/project.service";
+import {ProjectFacade} from "../../../facades/project.facade";
 
 @Component({
   selector: 'app-header',
