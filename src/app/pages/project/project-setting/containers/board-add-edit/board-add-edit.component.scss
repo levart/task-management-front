@@ -25,3 +25,24 @@
     box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.3);
   }
 }
+
+.item-placeholder {
+  flex: initial;
+  width: 300px;
+  height: 300px;
+  display: block;
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.3);
+}
+
+.item-preview {
+  width: 300px;
+  height: 300px;
+  display: block;
+  background-color: #af1a1a;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.3);
+}

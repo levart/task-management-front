@@ -18,6 +18,7 @@ import { IssueTypeAddEditComponent } from './containers/issue-type-add-edit/issu
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {UserModule} from "../../user/user.module";
+import {CdkDrag, CdkDropList, DragDropModule} from "@angular/cdk/drag-drop";
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import {UserModule} from "../../user/user.module";
     MatDialogModule,
     MatCheckboxModule,
     MatFormFieldModule,
-    UserModule
+    UserModule,
+    DragDropModule
   ]
 })
 export class ProjectSettingModule { }

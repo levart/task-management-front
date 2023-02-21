@@ -3,6 +3,7 @@ import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ETaskStatus} from "../../../../../core/enums/task-status.enum";
 import {BoardService} from "../../../../../core/services/board.service";
 import {ActivatedRoute, Router} from "@angular/router";
+import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 
 @Component({
   selector: 'app-board-add-edit',
@@ -46,6 +47,7 @@ export class BoardAddEditComponent implements OnInit {
       this.form.patchValue(res)
       res.columns.forEach(column => {
         this.columnsFormArray.push(new FormGroup({
+          id: new FormControl(column.id),
           name: new FormControl(column.name, Validators.required),
           description: new FormControl(column.description, Validators.required),
           position: new FormControl(column.position, Validators.required),
@@ -57,6 +59,7 @@ export class BoardAddEditComponent implements OnInit {
 
   addColumn() {
     this.columnsFormArray.push(new FormGroup({
+      id: new FormControl(null),
       name: new FormControl(null, Validators.required),
       description: new FormControl(null, Validators.required),
       position: new FormControl(this.columnsFormArray.length + 1, Validators.required),
@@ -83,5 +86,13 @@ export class BoardAddEditComponent implements OnInit {
     }
 
 
+  }
+
+  drop(event: CdkDragDrop<any, any>) {
+    moveItemInArray(this.columnsFormArray.controls, event.previousIndex, event.currentIndex);
+    console.log(this.columnsFormArray.controls)
+    this.columnsFormArray.controls.forEach((control, index) => {
+      control.get('position')?.setValue(index + 1)
+    })
   }
 }

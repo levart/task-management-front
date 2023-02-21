@@ -1,5 +1,9 @@
 <div class="container">
-  <div></div>
+  <div>
+    <button [routerLink]="['/']">Home</button>
+    <button [routerLink]="['/dashboard']">Dashboard</button>
+    <button [routerLink]="['/backlog']">Backlog</button>
+  </div>
   <div>
     <ng-container *ngIf="isAuth; else notAuth">
       <button [routerLink]="['/projects/add']">Add project</button>

@@ -16,8 +16,13 @@
 
     </div>
 
-    <div class="columns" formArrayName="columns">
-      <div *ngFor="let column of columnsFormArray.controls; let i = index" class="item">
+    <div class="columns" formArrayName="columns" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
+<!--      <div *cdkDragPreview class="preview"></div>-->
+      <div *ngFor="let column of columnsFormArray.controls; let i = index" class="item" cdkDrag>
+        <div class="item-placeholder" *cdkDragPlaceholder></div>
+        <div class="item-preview" *cdkDragPreview>
+          dfgsdfgs
+        </div>
         <div [formGroupName]="i">
           <mat-form-field>
             <mat-label>Name</mat-label>
