@@ -19,6 +19,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {UserModule} from "../../user/user.module";
 import {CdkDrag, CdkDropList, DragDropModule} from "@angular/cdk/drag-drop";
+import { ProjectEpicsComponent } from './containers/project-epics/project-epics.component';
+import { ProjectEpicAddEditComponent } from './containers/project-epic-add-edit/project-epic-add-edit.component';
 
 
 @NgModule({
@@ -29,6 +31,8 @@ import {CdkDrag, CdkDropList, DragDropModule} from "@angular/cdk/drag-drop";
     ProjectUsersComponent,
     BoardAddEditComponent,
     IssueTypeAddEditComponent,
+    ProjectEpicsComponent,
+    ProjectEpicAddEditComponent,
   ],
   imports: [
     CommonModule,

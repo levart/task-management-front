@@ -1,0 +1,66 @@
+<div class="container">
+  <h1 mat-dialog-title>Create Task</h1>
+  <div mat-dialog-content [formGroup]="form">
+    <div class="content">
+      <div class="content_left">
+        <mat-form-field>
+          <input matInput placeholder="Task Name" formControlName="name">
+        </mat-form-field>
+        <mat-form-field>
+          <textarea matInput [rows]="10" formControlName="description"></textarea>
+        </mat-form-field>
+      </div>
+      <div class="content_right">
+        <mat-form-field>
+          <mat-select placeholder="Task Type" formControlName="issueTypeId">
+            <mat-option *ngFor="let type of types$ | async" [value]="type.id">
+              {{type.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select placeholder="Epic" formControlName="epicId">
+            <mat-option *ngFor="let epic of epics$ | async" [value]="epic.id">
+              {{epic.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select placeholder="Task Priority" formControlName="priority">
+            <mat-option *ngFor="let priority of priorities" [value]="priority.id">
+              {{priority.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select placeholder="Assign User" formControlName="assigneeId">
+            <mat-option *ngFor="let user of users$ |async" [value]="user.id">
+              {{user.firstName}} {{user.lastName}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select placeholder="Reporter User" formControlName="reporterId">
+            <mat-option *ngFor="let user of users$ |async" [value]="user.id">
+              {{user.firstName}} {{user.lastName}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-divider></mat-divider>
+
+        <div formArrayName="taskProperty">
+          <div *ngFor="let property of taskProperty.controls; let i = index" [formGroupName]="i">
+            <mat-form-field>
+              <input matInput [placeholder]="property.get('name')?.value" formControlName="value" [required]="form.get('isRequired')?.value">
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="dialogRef.close()">Cancel</button>
+    <button mat-button (click)="save()">Create</button>
+  </div>
+</div>

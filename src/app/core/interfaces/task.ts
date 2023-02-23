@@ -8,11 +8,11 @@ export interface ITask {
   name: string;
   description: string;
   issueTypeId: number;
-  issueType: IIssueType;
+  issueType?: IIssueType;
   epicId: number;
-  epic: IEpic;
-  projectId: number;
-  project: IProject;
+  epic?: IEpic;
+  projectId?: number;
+  project?: IProject;
   boardId: number;
   board: string;
   boardColumnId: number;
@@ -31,4 +31,13 @@ export interface ITask {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;
+  taskProperty: ITaskProperty[];
+}
+
+export interface ITaskProperty {
+  id: number;
+  name: string;
+  filedName: string;
+  value: string;
+  isRequired: boolean;
 }

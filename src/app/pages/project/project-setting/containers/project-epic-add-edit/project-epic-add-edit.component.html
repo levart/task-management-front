@@ -1,0 +1,18 @@
+<div>
+  <form [formGroup]="form">
+    <div class="form-container">
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput placeholder="Name" formControlName="name">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Description</mat-label>
+        <input matInput placeholder="Description" formControlName="description">
+      </mat-form-field>
+
+
+      <button mat-raised-button color="primary" (click)="save()">Save</button>
+    </div>
+
+  </form>
+</div>

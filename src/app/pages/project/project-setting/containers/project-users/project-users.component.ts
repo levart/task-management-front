@@ -48,7 +48,7 @@ export class ProjectUsersComponent implements OnInit, OnDestroy {
   }
 
   getProjectUsers() {
-    this.projectService.getProjectUsers(this.projectId)
+    this.projectService.getProjectUsers()
       .pipe(takeUntil(this.sub$))
       .subscribe(users => {
         this.projectUserIds  = users.map((user: IUser) => user.id);

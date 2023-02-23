@@ -37,7 +37,7 @@ export class ProjectService extends BaseService{
     return this.delete(`project/${id}`);
   }
 
-  getProjectUsers(id: number): Observable<any> {
+  getProjectUsers(): Observable<any> {
     return this.get(`project/users`);
   }
 

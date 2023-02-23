@@ -1,9 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import {BoardService} from "../../../core/services/board.service";
 import {ActivatedRoute} from "@angular/router";
-import {IBoard} from "../../../core/interfaces/board";
+import {Column, IBoard} from "../../../core/interfaces/board";
 import {ITask} from "../../../core/interfaces/task";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
+import {MatDialog} from "@angular/material/dialog";
+import {TaskAddEditComponent} from "../task-add-edit/task-add-edit.component";
+import {TaskService} from "../../../core/services/task.service";
+
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-board',
@@ -37,7 +42,9 @@ export class BoardComponent implements OnInit{
 
   constructor(
     private boardService: BoardService,
+    private taskService: TaskService,
     private route: ActivatedRoute,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -54,6 +61,7 @@ export class BoardComponent implements OnInit{
     this.boardService.getBoard(this.boardId).subscribe(board => {
       console.log(board)
       this.board = board
+      this.getTasks()
     })
   }
 
@@ -72,7 +80,28 @@ export class BoardComponent implements OnInit{
     }
   }
 
-  addTask(id: number) {
-    
+  addTask(column: Column) {
+    const  doalogRef = this.dialog.open(TaskAddEditComponent, {
+      width: '1000px',
+      data: {
+        boardId: this.boardId,
+        column: column
+      },
+    });
+
+    doalogRef.afterClosed().subscribe((task: ITask) => {
+      if (task) {
+        this.getTasks()
+      }
+    })
+  }
+
+  private getTasks() {
+    this.taskService.getTasks(this.boardId).subscribe(tasks => {
+      console.log(tasks)
+      this.tasks = _.groupBy(tasks, 'boardColumnId')
+      console.log(this.tasks)
+      // this.tasks = tasks
+    })
   }
 }

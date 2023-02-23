@@ -4,13 +4,13 @@
     <div  class="column" cdkDropList  *ngFor="let column of board.columns" [cdkDropListData]="tasks[column.id] || []" (cdkDropListDropped)="drop($event)">
       <div class="column-head">
         <h3>{{column.name}}</h3>
-        <button (click)="addTask(column.id)">Add Task</button>
+        <button (click)="addTask(column)">Add Task</button>
       </div>
       <div class="tasks">
         <div class="card" *ngFor="let card of tasks[column.id] || []" cdkDrag>
           <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
           <h4>{{card.id}}</h4>
-          <p>{{card.title}}</p>
+          <p>{{card.name}}</p>
         </div>
       </div>
     </div>
