@@ -1,20 +1,30 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
-import {TaskService} from "../../../core/services/task.service";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {Column} from "../../../core/interfaces/board";
+import {FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from "@angular/material/dialog";
 import {Observable, shareReplay, Subject, takeUntil} from "rxjs";
-import {IssueTypeService} from "../../../core/services/issue-type.service";
-import {EpicService} from "../../../core/services/epic.service";
-import {IEpic} from "../../../core/interfaces/epic";
-import {IIssueType} from "../../../core/interfaces/issue-type";
-import {IUser} from "../../../core/interfaces/user";
-import {ProjectService} from "../../../core/services/project.service";
+import {CommonModule} from "@angular/common";
+import {MatButtonModule} from "@angular/material/button";
+import {RouterModule} from "@angular/router";
+import {IIssueType} from "../../core/interfaces/issue-type";
+import {IEpic} from "../../core/interfaces/epic";
+import {IUser} from "../../core/interfaces/user";
+import {TaskService} from "../../core/services/task.service";
+import {IssueTypeService} from "../../core/services/issue-type.service";
+import {EpicService} from "../../core/services/epic.service";
+import {ProjectService} from "../../core/services/project.service";
+import {Column, IBoard} from "../../core/interfaces/board";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
+import {MatDividerModule} from "@angular/material/divider";
+import {BoardService} from "../../core/services/board.service";
 
 @Component({
   selector: 'app-task-add-edit',
   templateUrl: './task-add-edit.component.html',
-  styleUrls: ['./task-add-edit.component.scss']
+  styleUrls: ['./task-add-edit.component.scss'],
+  standalone: true,
+  imports: [CommonModule, MatButtonModule, RouterModule, MatDialogModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatDividerModule,],
 })
 export class TaskAddEditComponent implements OnInit, OnDestroy {
 
@@ -27,15 +37,16 @@ export class TaskAddEditComponent implements OnInit, OnDestroy {
     priority: new FormControl(null, Validators.required),
     assigneeId: new FormControl(null),
     reporterId: new FormControl(null, Validators.required),
-    boardId: new FormControl(null, Validators.required),
-    boardColumnId: new FormControl(null, Validators.required),
+    boardId: new FormControl(null),
+    boardColumnId: new FormControl(null),
     isBacklog: new FormControl(false, Validators.required),
-    taskStatus: new FormControl(this.data.column?.taskStatus, Validators.required),
+    taskStatus: new FormControl(this.data.column?.taskStatus || 'ToDo', Validators.required),
     taskProperty: new FormArray([])
   })
 
 
   sub$ = new Subject();
+  boards$: Observable<IBoard[]> = this.boardService.getBoards();
   types$: Observable<IIssueType[]> = this.issueTypeService.getIssueTypes();
   epics$: Observable<IEpic[]> = this.epicService.getEpics();
   users$: Observable<IUser[]> = this.projectService.getProjectUsers()
@@ -57,9 +68,10 @@ export class TaskAddEditComponent implements OnInit, OnDestroy {
     private taskService: TaskService,
     private issueTypeService: IssueTypeService,
     private epicService: EpicService,
+    private boardService: BoardService,
     private projectService: ProjectService,
     public dialogRef: MatDialogRef<TaskAddEditComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { taskId: number, boardId: number, column: Column }
+    @Inject(MAT_DIALOG_DATA) public data: { taskId: number, boardId: number, column: Column, isBacklog: boolean  }
   ) {
   }
 
@@ -74,6 +86,17 @@ export class TaskAddEditComponent implements OnInit, OnDestroy {
           this.getIssueTypeProperties(issueTypeId)
         })
     }
+
+    if (this.data.isBacklog) {
+      this.form.patchValue({isBacklog: this.data.isBacklog})
+      this.form.get('boardId')?.clearValidators()
+      this.form.get('boardColumnId')?.clearValidators()
+    } else {
+      this.form.get('boardId')?.setValidators(Validators.required)
+      this.form.get('boardColumnId')?.setValidators(Validators.required)
+    }
+    this.form.get('boardId')?.updateValueAndValidity()
+    this.form.get('boardColumnId')?.updateValueAndValidity()
     if (this.data.boardId) {
       this.form.patchValue({boardId: this.data.boardId})
     }

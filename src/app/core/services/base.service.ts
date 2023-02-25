@@ -10,8 +10,10 @@ export class BaseService {
   http: HttpClient = inject(HttpClient);
 
 
-  get<T>(url: string): Observable<T> {
-    return this.http.get<T>(this.apiUrl + url);
+  get<T>(url: string, params = {}): Observable<T> {
+    return this.http.get<T>(this.apiUrl + url, {
+      params: params
+    });
   }
 
   post<T>(url: string, data: any): Observable<T> {

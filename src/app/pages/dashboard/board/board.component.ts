@@ -5,10 +5,10 @@ import {Column, IBoard} from "../../../core/interfaces/board";
 import {ITask} from "../../../core/interfaces/task";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 import {MatDialog} from "@angular/material/dialog";
-import {TaskAddEditComponent} from "../task-add-edit/task-add-edit.component";
 import {TaskService} from "../../../core/services/task.service";
 
 import * as _ from 'lodash';
+import {TaskAddEditComponent} from "../../../shared/task-add-edit/task-add-edit.component";
 
 @Component({
   selector: 'app-board',
@@ -66,10 +66,12 @@ export class BoardComponent implements OnInit{
   }
 
 
-  drop(event: CdkDragDrop<any>) {
-    console.log(event)
+  drop(event: CdkDragDrop<any>, column: Column) {
+    console.log(event.container)
+
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+
     } else {
       transferArrayItem(
         event.previousContainer.data,
@@ -77,7 +79,25 @@ export class BoardComponent implements OnInit{
         event.previousIndex,
         event.currentIndex,
       );
+      const tasks: ITask[] = event.container.data.map((task: ITask, index: number) => {
+        return {
+          ...task,
+          taskStatus: column.taskStatus,
+          boardColumnId: column.id,
+        }
+      })
+
+      this.tasks[column.id] = tasks
+      const currentTask = tasks[event.currentIndex]
+      console.log(currentTask)
+      this.taskService.updateTask(currentTask.id, currentTask).subscribe(task => {
+
+        console.log(task)
+        this.getTasks()
+      })
     }
+
+
   }
 
   addTask(column: Column) {
@@ -97,11 +117,24 @@ export class BoardComponent implements OnInit{
   }
 
   private getTasks() {
-    this.taskService.getTasks(this.boardId).subscribe(tasks => {
-      console.log(tasks)
+    this.taskService.getTasks({boardId: this.boardId}).subscribe(tasks => {
       this.tasks = _.groupBy(tasks, 'boardColumnId')
-      console.log(this.tasks)
-      // this.tasks = tasks
+    })
+  }
+
+  viewTask(task: ITask, column: Column) {
+    const  doalogRef = this.dialog.open(TaskAddEditComponent, {
+      width: '1000px',
+      data: {
+        boardId: this.boardId,
+        column: column,
+        taskId: task.id
+      },
+    });
+    doalogRef.afterClosed().subscribe((task: ITask) => {
+      if (task) {
+        this.getTasks()
+      }
     })
   }
 }

@@ -5,7 +5,6 @@ import {DashboardRoutingModule} from './dashboard-routing.module';
 import {DashboardComponent} from './dashboard.component';
 import {BoardComponent} from './board/board.component';
 import {DragDropModule} from "@angular/cdk/drag-drop";
-import {TaskAddEditComponent} from './task-add-edit/task-add-edit.component';
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {ReactiveFormsModule} from "@angular/forms";
@@ -19,7 +18,6 @@ import {MatDividerModule} from "@angular/material/divider";
   declarations: [
     DashboardComponent,
     BoardComponent,
-    TaskAddEditComponent
   ],
   imports: [
     CommonModule,

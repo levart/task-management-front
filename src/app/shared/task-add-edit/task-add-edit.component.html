@@ -11,6 +11,13 @@
         </mat-form-field>
       </div>
       <div class="content_right">
+        <mat-form-field *ngIf="data.isBacklog">
+          <mat-select placeholder="Board" formControlName="boardId">
+            <mat-option *ngFor="let board of boards$ | async" [value]="board.id">
+              {{board.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
         <mat-form-field>
           <mat-select placeholder="Task Type" formControlName="issueTypeId">
             <mat-option *ngFor="let type of types$ | async" [value]="type.id">

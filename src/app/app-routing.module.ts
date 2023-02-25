@@ -18,6 +18,18 @@ const routes: Routes = [
       {
         path: 'projects',
         loadChildren: () => import('./pages/project/project.module').then(m => m.ProjectModule)
+      },
+      {
+        path: 'users',
+        loadChildren: () => import('./pages/user/user.module').then(m => m.UserModule)
+      },
+      {
+        path: 'roles',
+        loadChildren: () => import('./pages/roles/roles.module').then(m => m.RolesModule)
+      },
+      {
+        path: 'backlog',
+        loadComponent: () => import('./pages/backlog/backlog.component').then(m => m.BacklogComponent)
       }
     ]
   },

@@ -3,6 +3,8 @@
     <button [routerLink]="['/']">Home</button>
     <button [routerLink]="['/dashboard']">Dashboard</button>
     <button [routerLink]="['/backlog']">Backlog</button>
+    <button [routerLink]="['/users']">Users</button>
+    <button [routerLink]="['/roles']">Roles</button>
   </div>
   <div>
     <ng-container *ngIf="isAuth; else notAuth">

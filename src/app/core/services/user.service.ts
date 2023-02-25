@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import {BaseService} from "./base.service";
 import {Observable} from "rxjs";
+import {IUser} from "../interfaces/user";
+import {PaginationResponse} from "../interfaces/pagination-response";
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +14,8 @@ export class UserService extends BaseService{
     return this.post('users', data);
   }
 
-  getUsers() {
-    return this.get('users');
+  getUsers(params = {}): Observable<PaginationResponse<IUser>> {
+    return this.get('users', params);
   }
 
 
@@ -21,7 +23,7 @@ export class UserService extends BaseService{
     return this.get('users/all');
   }
 
-  getUser(id: number) {
+  getUser(id: number): Observable<IUser> {
     return this.get(`users/${id}`);
   }
 

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import {MatDialogRef} from "@angular/material/dialog";
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {UserService} from "../../../../core/services/user.service";
 
@@ -8,7 +8,7 @@ import {UserService} from "../../../../core/services/user.service";
   templateUrl: './user-add-edit.component.html',
   styleUrls: ['./user-add-edit.component.scss']
 })
-export class UserAddEditComponent {
+export class UserAddEditComponent implements OnInit {
 
   form: FormGroup = new FormGroup({
     id: new FormControl(null),
@@ -22,7 +22,18 @@ export class UserAddEditComponent {
   constructor(
     public dialogRef: MatDialogRef<UserAddEditComponent>,
     private userService: UserService,
-  ) { }
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+  }
+
+  ngOnInit(): void {
+    if (this.data.userId) {
+      this.userService.getUser(this.data.userId)
+        .subscribe((res) => {
+          this.form.patchValue(res);
+        })
+    }
+  }
 
   onSubmit() {
     this.form.markAllAsTouched()
