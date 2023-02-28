@@ -3,7 +3,7 @@
     <button [routerLink]="['/']">Home</button>
     <button [routerLink]="['/dashboard']">Dashboard</button>
     <button [routerLink]="['/backlog']">Backlog</button>
-    <button [routerLink]="['/users']">Users</button>
+    <button [routerLink]="['/users']" [appPermissions]="['user:list']">Users</button>
     <button [routerLink]="['/roles']">Roles</button>
   </div>
   <div>

@@ -1,3 +1,5 @@
+import {IRole} from "./role";
+
 export interface IUser {
   id: number;
   createdAt: Date;
@@ -7,6 +9,6 @@ export interface IUser {
   mobileNumber: string;
   isActive: boolean;
   userPermissions: string[];
-  roles: string[];
+  roles: IRole[];
   projects: string[];
 }

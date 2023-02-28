@@ -11,12 +11,16 @@ import {MatDialogModule} from "@angular/material/dialog";
 import { UsersComponent } from './components/users/users.component';
 import {MatTableModule} from "@angular/material/table";
 import {MatPaginatorModule} from "@angular/material/paginator";
+import { UserRoleComponent } from './components/user-role/user-role.component';
+import {MatSelectModule} from "@angular/material/select";
+import {PermissionsDirective} from "../../core/directives/permissions.directive";
 
 
 @NgModule({
   declarations: [
     UserAddEditComponent,
-    UsersComponent
+    UsersComponent,
+    UserRoleComponent
   ],
   imports: [
     CommonModule,
@@ -29,6 +33,8 @@ import {MatPaginatorModule} from "@angular/material/paginator";
     MatDialogModule,
     MatTableModule,
     MatPaginatorModule,
+    MatSelectModule,
+    PermissionsDirective,
   ],
   exports: [
     UserAddEditComponent

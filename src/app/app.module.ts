@@ -8,6 +8,8 @@ import {AuthInterceptor} from "./core/interceptors/auth.interceptor";
 import {MainLayoutModule} from "./features/main-layout/main-layout.module";
 import {ProjectInterceptor} from "./core/interceptors/project.interceptor";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AccessDeniedComponent } from './pages/access-denied/access-denied.component';
+import { PermissionsDirective } from './core/directives/permissions.directive';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     AppRoutingModule,
     HttpClientModule,
     MainLayoutModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    AccessDeniedComponent
   ],
   providers: [
     {

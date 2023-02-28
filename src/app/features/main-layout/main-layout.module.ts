@@ -4,6 +4,7 @@ import { MainLayoutComponent } from './main-layout.component';
 import { HeaderComponent } from './header/header.component';
 import {RouterModule} from "@angular/router";
 import {FormsModule} from "@angular/forms";
+import {PermissionsDirective} from "../../core/directives/permissions.directive";
 
 
 
@@ -12,11 +13,12 @@ import {FormsModule} from "@angular/forms";
     MainLayoutComponent,
     HeaderComponent
   ],
-  imports: [
-    CommonModule,
-    RouterModule,
-    FormsModule
-  ],
+    imports: [
+        CommonModule,
+        RouterModule,
+        FormsModule,
+      PermissionsDirective
+    ],
   exports: [
     MainLayoutComponent,
     HeaderComponent

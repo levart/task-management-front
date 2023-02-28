@@ -12,6 +12,9 @@ export class RoleService extends BaseService{
   getRoles(params = {}): Observable<PaginationResponse<IRole>> {
     return this.get('role', params);
   }
+  getAllRoles(): Observable<IRole[]> {
+    return this.get('role/all');
+  }
 
   getRole(id: string): Observable<any> {
     return this.get(`role/${id}`);
@@ -37,5 +40,9 @@ export class RoleService extends BaseService{
                    roleId: string, permissions: number[]
                  }): Observable<any> {
     return this.post(`role/permissions`, params);
+  }
+
+  getMyRoles(): Observable<any> {
+    return this.get(`role/my`);
   }
 }

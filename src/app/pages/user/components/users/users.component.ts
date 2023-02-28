@@ -9,6 +9,7 @@ import {UserService} from "../../../../core/services/user.service";
 import {ConfirmationPopupComponent} from "../../../../shared/confirmation-popup/confirmation-popup.component";
 import {UserAddEditComponent} from "../user-add-edit/user-add-edit.component";
 import {PageEvent} from "@angular/material/paginator";
+import {UserRoleComponent} from "../user-role/user-role.component";
 
 @Component({
   selector: 'app-users',
@@ -85,9 +86,22 @@ export class UsersComponent implements OnInit{
   }
 
   pageEvent($event: PageEvent) {
-    console.log($event)
     this.pageIndex = $event.pageIndex + 1;
     this.pageSize = $event.pageSize;
     this.getUsers()
+  }
+
+  setRole(user: IUser) {
+    const dialogRef = this.dialog.open(UserRoleComponent, {
+      data: {
+        user: user,
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getUsers();
+      }
+    })
   }
 }
