@@ -5,6 +5,7 @@ import {Subject, switchMap, takeUntil, tap} from "rxjs";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ProjectFacade} from "../../../facades/project.facade";
 import {ActivatedRoute, Router} from "@angular/router";
+import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'app-project-add-edit',
