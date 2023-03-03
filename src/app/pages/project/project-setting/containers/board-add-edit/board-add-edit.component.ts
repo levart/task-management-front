@@ -95,4 +95,8 @@ export class BoardAddEditComponent implements OnInit {
       control.get('position')?.setValue(index + 1)
     })
   }
+
+  removeColumn(i: number) {
+    this.columnsFormArray.removeAt(i);
+  }
 }

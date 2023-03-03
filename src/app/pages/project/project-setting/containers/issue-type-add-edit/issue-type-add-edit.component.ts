@@ -86,4 +86,8 @@ export class IssueTypeAddEditComponent implements OnInit {
 
 
   }
+
+  removeColumn(i: number) {
+    this.columnsFormArray.removeAt(i);
+  }
 }
