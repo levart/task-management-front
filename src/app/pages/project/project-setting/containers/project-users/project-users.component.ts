@@ -9,6 +9,9 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {UserService} from "../../../../../core/services/user.service";
 import {MatDialog} from "@angular/material/dialog";
 import {UserAddEditComponent} from "../../../../user/components/user-add-edit/user-add-edit.component";
+import {Store} from "@ngrx/store";
+import {loadProjectUsers, ProjectStateModule, setProjectUsers} from "../../../../../store";
+import {currentProject, projectUsers} from "../../../../../store/project/project.seletors";
 
 @Component({
   selector: 'app-project-users',
@@ -37,21 +40,31 @@ export class ProjectUsersComponent implements OnInit, OnDestroy {
   }
 
   constructor(
+    private store: Store<{ project: ProjectStateModule }>,
     private projectService: ProjectService,
     private userService: UserService,
     private projectFacade: ProjectFacade,
     private dialog: MatDialog,
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     this.getProjectUsers()
+    this.store.select(currentProject)
+      .subscribe((project) => {
+        console.log(project)
+        if (project) {
+          this.store.dispatch(loadProjectUsers())
+        }
+      })
   }
 
   getProjectUsers() {
-    this.projectService.getProjectUsers()
+    this.store.select(projectUsers)
       .pipe(takeUntil(this.sub$))
       .subscribe(users => {
-        this.projectUserIds  = users.map((user: IUser) => user.id);
+        if (!users) return;
+        this.projectUserIds = users.map((user: IUser) => user.id);
         this.dataSource.data = users;
       })
   }
@@ -65,14 +78,10 @@ export class ProjectUsersComponent implements OnInit, OnDestroy {
   delete(id: number) {
     const userIds = this.projectUserIds.filter((userId: number) => userId !== id);
 
-    this.projectService.addProjectUser({
+    this.store.dispatch(setProjectUsers({
       projectId: this.projectId,
       userIds
-    })
-      .pipe(takeUntil(this.sub$))
-      .subscribe(() => {
-        this.getProjectUsers();
-      })
+    }))
   }
 
   chooseUser() {
@@ -82,19 +91,14 @@ export class ProjectUsersComponent implements OnInit, OnDestroy {
   onSubmit() {
     const userIds = [...this.projectUserIds, this.userForm.value.userId];
     this.createUsers(userIds)
-      .subscribe(() => {
-        this.getProjectUsers();
-        this.chooseUser();
-      })
-
+    this.chooseUser();
   }
 
   createUsers(userIds: number[]) {
-   return  this.projectService.addProjectUser({
+    this.store.dispatch(setProjectUsers({
       projectId: this.projectId,
       userIds
-    })
-      .pipe(takeUntil(this.sub$))
+    }))
 
   }
 
@@ -104,14 +108,10 @@ export class ProjectUsersComponent implements OnInit, OnDestroy {
     dialog.afterClosed()
       .pipe()
       .subscribe((result: IUser) => {
-
         if (result) {
           const userIds = [...this.projectUserIds, result.id];
           this.createUsers(userIds)
-            .subscribe(() => {
-              this.getProjectUsers();
-              this.chooseUserActive = false;
-            })
+          this.chooseUserActive = false;
         }
       })
   }

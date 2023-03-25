@@ -110,6 +110,9 @@
     }
   },
   "cli": {
-    "analytics": "7609cfea-d2d8-4f8d-b5f7-8334d810b7f0"
+    "analytics": "7609cfea-d2d8-4f8d-b5f7-8334d810b7f0",
+    "schematicCollections": [
+      "@ngrx/schematics"
+    ]
   }
 }

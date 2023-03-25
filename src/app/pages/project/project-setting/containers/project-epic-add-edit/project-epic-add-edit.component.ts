@@ -3,6 +3,8 @@ import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {EpicService} from "../../../../../core/services/epic.service";
 import {Subject, takeUntil} from "rxjs";
+import {Store} from "@ngrx/store";
+import {createEpic, EpicStateModel, getEpic, updateEpic} from "../../../../../store/epic";
 
 @Component({
   selector: 'app-project-epic-add-edit',
@@ -21,9 +23,8 @@ export class ProjectEpicAddEditComponent implements OnInit, OnDestroy {
   epicId!: number;
 
   constructor(
+    private store: Store<{ epic: EpicStateModel }>,
     private route: ActivatedRoute,
-    private router: Router,
-    private epicService: EpicService,
   ) {
   }
 
@@ -44,24 +45,19 @@ export class ProjectEpicAddEditComponent implements OnInit, OnDestroy {
     }
 
     if (this.epicId) {
-      this.epicService.updateEpic(this.form.value)
-        .pipe(takeUntil(this.sub$))
-        .subscribe(() => {
-          this.router.navigate(['/projects/setting/epics']).then()
-        })
+      this.store.dispatch(updateEpic({epic: this.form.value}))
     } else {
-      this.epicService.createEpic(this.form.value)
-        .pipe(takeUntil(this.sub$))
-        .subscribe(() => {
-          this.router.navigate(['/projects/setting/epics']).then()
-        })
+      this.store.dispatch(createEpic({epic: this.form.value}))
     }
   }
 
   private getEpic(id: number) {
-    this.epicService.getEpic(id)
+    this.store.select(getEpic, {epicId: id})
       .pipe(takeUntil(this.sub$))
       .subscribe(res => {
+        if (!res) {
+          return;
+        }
         this.form.patchValue(res)
       })
   }

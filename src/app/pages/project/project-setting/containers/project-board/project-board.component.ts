@@ -1,11 +1,14 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {BoardService} from "../../../../../core/services/board.service";
-import {Observable, of, Subject, switchMap, takeUntil} from "rxjs";
+import {Observable, of, Subject, switchMap, takeUntil, tap} from "rxjs";
 import {IBoard} from "../../../../../core/interfaces/board";
 import {DataSource} from "@angular/cdk/collections";
 import {MatTableDataSource} from "@angular/material/table";
 import {ConfirmationPopupComponent} from "../../../../../shared/confirmation-popup/confirmation-popup.component";
 import {MatDialog} from "@angular/material/dialog";
+import {Store} from "@ngrx/store";
+import {BoardStateModule, deleteBoard, getBoards, loadBoards, ProjectStateModule} from "../../../../../store";
+import {currentProject} from "../../../../../store/project/project.seletors";
 
 @Component({
   selector: 'app-project-board',
@@ -21,6 +24,7 @@ export class ProjectBoardComponent implements OnInit, OnDestroy {
   sub$ = new Subject();
 
   constructor(
+    private store: Store<{ project: ProjectStateModule, board: BoardStateModule }>,
     private boardService: BoardService,
     public dialog: MatDialog,
   ) {
@@ -29,11 +33,19 @@ export class ProjectBoardComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.getBoards();
+    this.getBoards()
+    this.store.select(currentProject)
+      .pipe(takeUntil(this.sub$))
+      .subscribe((project) => {
+        if (project) {
+          this.store.dispatch(loadBoards());
+        }
+      })
+
   }
 
   getBoards() {
-    this.boardService.getBoards()
+    this.store.select(getBoards)
       .pipe(takeUntil(this.sub$))
       .subscribe(boards => {
         this.dataSource.data = boards;
@@ -55,17 +67,12 @@ export class ProjectBoardComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed()
       .pipe(
         takeUntil(this.sub$),
-        switchMap((result) => {
+        tap((result) => {
           if (result) {
-            return this.boardService.deleteBoard(id);
+            return this.store.dispatch(deleteBoard({boardId: id}));
           }
-          return of(null);
         })
       )
-      .subscribe(result => {
-        if (result) {
-          this.getBoards();
-        }
-      });
+      .subscribe();
   }
 }

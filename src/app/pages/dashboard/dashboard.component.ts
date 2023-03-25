@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {BoardService} from "../../core/services/board.service";
 import {ActivatedRoute} from "@angular/router";
+import {Store} from "@ngrx/store";
+import {BoardStateModule, getBoards} from "../../store";
 
 @Component({
   selector: 'app-dashboard',
@@ -9,13 +11,12 @@ import {ActivatedRoute} from "@angular/router";
 })
 export class DashboardComponent implements OnInit{
 
-  boards$ = this.boardService.getBoards();
+  boards$ = this.store.select(getBoards);
 
   boardId: number | null = null;
 
   constructor(
-    private boardService: BoardService,
-    private route: ActivatedRoute,
+    private store: Store<{ board: BoardStateModule }>,
   ) {
   }
 

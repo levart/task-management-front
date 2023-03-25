@@ -21,6 +21,9 @@ import {UserModule} from "../../user/user.module";
 import {CdkDrag, CdkDropList, DragDropModule} from "@angular/cdk/drag-drop";
 import { ProjectEpicsComponent } from './containers/project-epics/project-epics.component';
 import { ProjectEpicAddEditComponent } from './containers/project-epic-add-edit/project-epic-add-edit.component';
+import {StoreModule} from "@ngrx/store";
+import {BoardEffect, boardReducer, ProjectEffect, projectReducer, reducers} from "../../../store";
+import {EffectsModule} from "@ngrx/effects";
 
 
 @NgModule({
@@ -47,7 +50,9 @@ import { ProjectEpicAddEditComponent } from './containers/project-epic-add-edit/
     MatCheckboxModule,
     MatFormFieldModule,
     UserModule,
-    DragDropModule
+    DragDropModule,
+    StoreModule.forFeature('app', reducers),
+    EffectsModule.forFeature([BoardEffect, ProjectEffect])
   ]
 })
 export class ProjectSettingModule { }

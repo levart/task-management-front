@@ -1,11 +1,14 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ProjectService} from "../../../core/services/project.service";
-import {Subject, switchMap, takeUntil, tap} from "rxjs";
+import {of, pipe, Subject, switchMap, takeUntil, tap} from "rxjs";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {ProjectFacade} from "../../../facades/project.facade";
 import {ActivatedRoute, Router} from "@angular/router";
 import {CommonModule} from "@angular/common";
+import {State, Store} from "@ngrx/store";
+import {createProject, loadProjects, ProjectStateModule, setProject, updateProject} from "../../../store";
+import {IProject} from "../../../core/interfaces/project";
+import {getProject} from "../../../store/project/project.seletors";
 
 @Component({
   selector: 'app-project-add-edit',
@@ -28,8 +31,8 @@ export class ProjectAddEditComponent implements OnDestroy, OnInit {
   sub$ = new Subject()
 
   constructor(
+    private store: Store<{ project: ProjectStateModule }>,
     private readonly projectService: ProjectService,
-    private readonly projectFacade: ProjectFacade,
     private _snackBar: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute
@@ -37,54 +40,37 @@ export class ProjectAddEditComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
-      if (params['id']) {
-        this.projectId = +params['id'];
-        this.projectService.getProject(+params['id']).subscribe(res => {
-          this.form.patchValue(res)
-        })
-      }
-    })
+    this.route.params
+      .pipe(
+        takeUntil(this.sub$),
+        switchMap((params: any) => {
+            if (params['id']) {
+              this.projectId = +params['id'];
+              return this.store.select(getProject, {projectId: +params['id']})
+            }
+
+            return of(null);
+          }
+        )
+      )
+      .subscribe((params: any) => {
+        if (params) {
+          this.form.patchValue(params)
+        }
+        return
+      })
   }
 
   save() {
     this.form.markAllAsTouched()
-
     if (this.form.invalid) {
       return;
     }
-
     if (this.projectId) {
-      this.projectService.updateProject(this.form.value)
-        .pipe(
-          takeUntil(this.sub$),
-          tap((res) => this.projectFacade.setProject(res.id)),
-          switchMap(() => this.projectFacade.getMyProjects$())
-        )
-        .subscribe(res => {
-
-          this._snackBar.open('Project updated', 'Close', {
-            duration: 2000,
-          })
-
-          this.router.navigate(['/projects/setting']).then();
-        });
+      this.store.dispatch(updateProject({project: this.form.value}))
       return;
     } else {
-      this.projectService.createProject(this.form.value)
-        .pipe(
-          takeUntil(this.sub$),
-          tap((res) => this.projectFacade.setProject(res.id)),
-          switchMap(() => this.projectFacade.getMyProjects$())
-        )
-        .subscribe(res => {
-
-          this._snackBar.open('Project created', 'Close', {
-            duration: 2000,
-          })
-
-          this.router.navigate(['/projects/setting']).then();
-        });
+      this.store.dispatch(createProject({project: this.form.value}))
     }
   }
 

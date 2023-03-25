@@ -1,21 +1,23 @@
 <h3>Project Info</h3>
-<mat-list>
-  <mat-list-item>
-    <span matListItemTitle>Name</span>
-    <span matListItemLine [ngStyle]="{
-      'color': project.color,
+<ng-container *ngIf="currentProject$ |async as currentProject">
+  <mat-list>
+    <mat-list-item>
+      <span matListItemTitle>Name</span>
+      <span matListItemLine [ngStyle]="{
+      'color': currentProject.color,
       'font-weight': 'bold'
-    }">{{project.name}} ({{project.abbreviation}})</span>
-  </mat-list-item>
-  <mat-list-item>
-    <span matListItemTitle>Description</span>
-    <span>
-      {{project.description}}
+    }">{{currentProject.name}} ({{currentProject.abbreviation}})</span>
+    </mat-list-item>
+    <mat-list-item>
+      <span matListItemTitle>Description</span>
+      <span>
+      {{currentProject.description}}
     </span>
-  </mat-list-item>
+    </mat-list-item>
 
-</mat-list>
+  </mat-list>
 
-<mat-divider></mat-divider>
+  <mat-divider></mat-divider>
 
-<button mat-raised-button color="primary" [routerLink]="['/projects/edit', project.id]">Edit</button>
+  <button mat-raised-button color="primary" [routerLink]="['/projects/edit', currentProject.id]">Edit</button>
+</ng-container>

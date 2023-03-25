@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -10,6 +10,11 @@ import {ProjectInterceptor} from "./core/interceptors/project.interceptor";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AccessDeniedComponent } from './pages/access-denied/access-denied.component';
 import { PermissionsDirective } from './core/directives/permissions.directive';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import {ProjectEffect, projectReducer} from "./store";
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import {MatSnackBar, MatSnackBarModule} from "@angular/material/snack-bar";
 
 @NgModule({
   declarations: [
@@ -21,7 +26,11 @@ import { PermissionsDirective } from './core/directives/permissions.directive';
     HttpClientModule,
     MainLayoutModule,
     BrowserAnimationsModule,
-    AccessDeniedComponent
+    AccessDeniedComponent,
+    StoreModule.forRoot({}),
+    EffectsModule.forRoot([]),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
+    MatSnackBarModule
   ],
   providers: [
     {

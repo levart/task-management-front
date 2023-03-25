@@ -4,6 +4,9 @@ import {ETaskStatus} from "../../../../../core/enums/task-status.enum";
 import {BoardService} from "../../../../../core/services/board.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
+import {Store} from "@ngrx/store";
+import {BoardStateModule, createBoard, getBoard, updateBoard} from "../../../../../store";
+import {IBoard} from "../../../../../core/interfaces/board";
 
 @Component({
   selector: 'app-board-add-edit',
@@ -28,7 +31,7 @@ export class BoardAddEditComponent implements OnInit {
   }
 
   constructor(
-    private readonly boardService: BoardService,
+    private store: Store<{ board: BoardStateModule }>,
     private router: Router,
     private route: ActivatedRoute
   ) { }
@@ -43,7 +46,10 @@ export class BoardAddEditComponent implements OnInit {
   }
 
   getBoard() {
-    this.boardService.getBoard(this.boardId).subscribe(res => {
+    this.store.select(getBoard, {boardId: this.boardId}).subscribe((res: IBoard | undefined) => {
+      if (!res) {
+        return;
+      }
       this.form.patchValue(res)
       res.columns.forEach(column => {
         this.columnsFormArray.push(new FormGroup({
@@ -74,15 +80,9 @@ export class BoardAddEditComponent implements OnInit {
       return;
     }
     if (this.boardId) {
-      this.boardService.updateBoard(this.form.value)
-        .subscribe( res => {
-          this.router.navigate(['/projects/setting/boards']).then()
-        })
+      this.store.dispatch(updateBoard({board: this.form.value}))
     } else {
-      this.boardService.createBoard(this.form.value)
-        .subscribe( res => {
-          this.router.navigate(['/projects/setting/boards']).then()
-        })
+      this.store.dispatch(createBoard({board: this.form.value}))
     }
 
 
@@ -90,7 +90,6 @@ export class BoardAddEditComponent implements OnInit {
 
   drop(event: CdkDragDrop<any, any>) {
     moveItemInArray(this.columnsFormArray.controls, event.previousIndex, event.currentIndex);
-    console.log(this.columnsFormArray.controls)
     this.columnsFormArray.controls.forEach((control, index) => {
       control.get('position')?.setValue(index + 1)
     })

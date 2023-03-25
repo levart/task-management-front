@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import {ProjectFacade} from "../../../../../facades/project.facade";
 import {IProject} from "../../../../../core/interfaces/project";
+import {Observable} from "rxjs";
+import {Store} from "@ngrx/store";
+import {ProjectStateModule} from "../../../../../store";
+import {currentProject} from "../../../../../store/project/project.seletors";
 
 @Component({
   selector: 'app-project-info',
@@ -9,16 +13,10 @@ import {IProject} from "../../../../../core/interfaces/project";
 })
 export class ProjectInfoComponent {
 
-  get project(): IProject {
-    return this.projectFacade.getProject()
-  }
+  currentProject$: Observable<IProject | null> = this.store.select(currentProject) ;
 
   constructor(
-    private readonly projectFacade: ProjectFacade,
+    private readonly store: Store<{project: ProjectStateModule}>,
   ) {
-  }
-
-  editProject() {
-
   }
 }

@@ -1,12 +1,16 @@
 import { Component } from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
 import {IIssueType} from "../../../../../core/interfaces/issue-type";
-import {of, Subject, switchMap, takeUntil} from "rxjs";
+import {of, Subject, switchMap, takeUntil, tap} from "rxjs";
 import {IssueTypeService} from "../../../../../core/services/issue-type.service";
 import {MatDialog} from "@angular/material/dialog";
 import {ConfirmationPopupComponent} from "../../../../../shared/confirmation-popup/confirmation-popup.component";
 import {EpicService} from "../../../../../core/services/epic.service";
 import {IEpic} from "../../../../../core/interfaces/epic";
+import {currentProject} from "../../../../../store/project/project.seletors";
+import {Store} from "@ngrx/store";
+import {ProjectStateModule} from "../../../../../store";
+import {deleteEpic, EpicStateModel, getEpics, loadEpics} from "../../../../../store/epic";
 
 @Component({
   selector: 'app-project-epics',
@@ -14,15 +18,12 @@ import {IEpic} from "../../../../../core/interfaces/epic";
   styleUrls: ['./project-epics.component.scss']
 })
 export class ProjectEpicsComponent {
-
   displayedColumns = ['id', 'name', 'createdAt', 'actions'];
-
   dataSource = new MatTableDataSource<IEpic>();
-
   sub$ = new Subject();
 
   constructor(
-    private epicService: EpicService,
+    private store: Store<{ project: ProjectStateModule, epic: EpicStateModel }>,
     public dialog: MatDialog,
   ) {
 
@@ -31,10 +32,17 @@ export class ProjectEpicsComponent {
 
   ngOnInit(): void {
     this.getEpics();
+    this.store.select(currentProject)
+      .subscribe((project) => {
+        if (project) {
+          this.store.dispatch(loadEpics())
+        }
+      })
+
   }
 
   getEpics() {
-    this.epicService.getEpics()
+    this.store.select(getEpics)
       .pipe(takeUntil(this.sub$))
       .subscribe(epics => {
         this.dataSource.data = epics;
@@ -53,17 +61,12 @@ export class ProjectEpicsComponent {
     dialogRef.afterClosed()
       .pipe(
         takeUntil(this.sub$),
-        switchMap((result) => {
+        tap((result) => {
           if (result) {
-            return this.epicService.deleteEpic(id);
+            this.store.dispatch(deleteEpic({epicId: id}));
           }
-          return of(null);
         })
       )
-      .subscribe(result => {
-        if (result) {
-          this.getEpics();
-        }
-      });
+      .subscribe();
   }
 }

@@ -10,6 +10,9 @@ import {ConfirmationPopupComponent} from "../../../../shared/confirmation-popup/
 import {UserAddEditComponent} from "../user-add-edit/user-add-edit.component";
 import {PageEvent} from "@angular/material/paginator";
 import {UserRoleComponent} from "../user-role/user-role.component";
+import {Store} from "@ngrx/store";
+import {UserStateModel} from "../../store/user.reducer";
+import {loadUsers} from "../../store/user.actions";
 
 @Component({
   selector: 'app-users',
@@ -27,6 +30,7 @@ export class UsersComponent implements OnInit{
   pageSize = 10;
 
   constructor(
+    private store: Store<{user: UserStateModel}>,
     private userService: UserService,
     public dialog: MatDialog,
   ) {
@@ -34,6 +38,10 @@ export class UsersComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    this.store.dispatch(loadUsers({
+      page: this.pageIndex,
+      limit: this.pageSize
+    }))
     this.getUsers()
   }
 
