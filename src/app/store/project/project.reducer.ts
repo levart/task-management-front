@@ -4,7 +4,7 @@ import {
   loadProjects,
   loadProjectsFailure,
   loadProjectsSuccess, loadProjectUsersSuccess,
-  setProject
+  setProject, setProjectSuccess
 } from "./project.actions";
 import {IProject} from "../../core/interfaces/project";
 import {loadBoards} from "../board";
@@ -29,17 +29,15 @@ export const projectReducer = createReducer(
   on(loadProjectsSuccess, (state, action) => {
       return {
         ...state,
-        projects: action.data
+        projects: action.projects
       }
     }
   ),
   on(loadProjectsFailure, (state, action) => state),
-  on(setProject, (state, action) => {
-    const project = state.projects.find((project) => project.id === +action.projectId);
-    project && localStorage.setItem('project', JSON.stringify(project));
+  on(setProjectSuccess, (state, action) => {
     return {
       ...state,
-      currentProject: project || null
+      currentProject: action.project
     }
   }),
   on(initCurrentProject, (state) => {

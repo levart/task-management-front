@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {BoardService} from "../../core/services/board.service";
 import {ActivatedRoute} from "@angular/router";
 import {Store} from "@ngrx/store";
-import {BoardStateModule, getBoards} from "../../store";
+import {AppState, BoardStateModule, getBoards, loadBoards} from "../../store";
 
 @Component({
   selector: 'app-dashboard',
@@ -16,7 +16,7 @@ export class DashboardComponent implements OnInit{
   boardId: number | null = null;
 
   constructor(
-    private store: Store<{ board: BoardStateModule }>,
+    private store: Store<AppState>,
   ) {
   }
 
@@ -24,6 +24,7 @@ export class DashboardComponent implements OnInit{
     // this.route.url.subscribe(url => {
     //   console.log(url)
     // })
+    this.store.dispatch(loadBoards())
   }
 
 

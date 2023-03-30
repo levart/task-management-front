@@ -9,6 +9,7 @@ import {StoreModule} from "@ngrx/store";
 import {EffectsModule} from "@ngrx/effects";
 import {BoardEffect, IssueTypesEffects, ProjectEffect, reducers} from "../../store";
 import {EpicEffects} from "../../store/epic";
+import {TasksEffects} from "../../store/tasks";
 
 
 @NgModule({
@@ -22,7 +23,7 @@ import {EpicEffects} from "../../store/epic";
     FormsModule,
     PermissionsDirective,
     StoreModule.forFeature('app', reducers),
-    EffectsModule.forFeature([BoardEffect, ProjectEffect, IssueTypesEffects, EpicEffects])
+    EffectsModule.forFeature([BoardEffect, ProjectEffect, IssueTypesEffects, EpicEffects, TasksEffects])
   ],
   exports: [
     MainLayoutComponent,

@@ -27,8 +27,9 @@ export class UserService extends BaseService{
     return this.get(`users/${id}`);
   }
 
-  updateUser(id: number, data: any) {
-    return this.put(`users/${id}`, data);
+  updateUser(data: IUser):Observable<IUser> {
+    console.log(data);
+    return this.put(`users/${data.id}`, data);
   }
 
   deleteUser(id: number) {

@@ -7,7 +7,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {ConfirmationPopupComponent} from "../../../../../shared/confirmation-popup/confirmation-popup.component";
 import {IIssueType} from "../../../../../core/interfaces/issue-type";
 import {IssueTypeService} from "../../../../../core/services/issue-type.service";
-import {Store} from "@ngrx/store";
+import {select, Store} from "@ngrx/store";
 import {getIssueTypes, IssueTypesStateModel, loadIssueTypes, ProjectStateModule} from "../../../../../store";
 import {currentProject} from "../../../../../store/project/project.seletors";
 
@@ -35,7 +35,7 @@ export class IssueTypesComponent {
 
   ngOnInit(): void {
     this.getIssueTypes();
-    this.store.select(currentProject)
+    this.store.pipe(select(currentProject))
       .subscribe((project) => {
         if (project) {
           this.store.dispatch(loadIssueTypes());

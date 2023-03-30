@@ -8,7 +8,7 @@ import {ConfirmationPopupComponent} from "../../../../../shared/confirmation-pop
 import {EpicService} from "../../../../../core/services/epic.service";
 import {IEpic} from "../../../../../core/interfaces/epic";
 import {currentProject} from "../../../../../store/project/project.seletors";
-import {Store} from "@ngrx/store";
+import {select, Store} from "@ngrx/store";
 import {ProjectStateModule} from "../../../../../store";
 import {deleteEpic, EpicStateModel, getEpics, loadEpics} from "../../../../../store/epic";
 
@@ -32,7 +32,7 @@ export class ProjectEpicsComponent {
 
   ngOnInit(): void {
     this.getEpics();
-    this.store.select(currentProject)
+    this.store.pipe(select(currentProject))
       .subscribe((project) => {
         if (project) {
           this.store.dispatch(loadEpics())

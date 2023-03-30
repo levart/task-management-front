@@ -9,6 +9,8 @@ import {TaskService} from "../../../core/services/task.service";
 
 import * as _ from 'lodash';
 import {TaskAddEditComponent} from "../../../shared/task-add-edit/task-add-edit.component";
+import {Store} from "@ngrx/store";
+import {getBoardTasks, loadTasks, TasksEffects} from "../../../store/tasks";
 
 @Component({
   selector: 'app-board',
@@ -19,28 +21,10 @@ export class BoardComponent implements OnInit{
   boardId!: number;
 
   board: IBoard = {} as IBoard;
-  tasks: any = {
-    6: [
-      {
-        id: 1,
-        title: 'Task 1',
-      },
-      {
-        id: 2,
-        title: 'Task 2',
-      },
-      {
-        id: 3,
-        title: 'Task 3',
-      }
-    ],
-    7: [],
-    8: [],
-    9: [],
-    10: [],
-  }
+  tasks: any = {}
 
   constructor(
+    private store: Store<{task: TasksEffects}>,
     private boardService: BoardService,
     private taskService: TaskService,
     private route: ActivatedRoute,
@@ -54,12 +38,16 @@ export class BoardComponent implements OnInit{
         this.getBoard()
       }
     })
+
+    this.store.select(getBoardTasks)
+      .subscribe( res => {
+        this.tasks = res
+      })
   }
 
 
   getBoard() {
     this.boardService.getBoard(this.boardId).subscribe(board => {
-      console.log(board)
       this.board = board
       this.getTasks()
     })
@@ -117,9 +105,7 @@ export class BoardComponent implements OnInit{
   }
 
   private getTasks() {
-    this.taskService.getTasks({boardId: this.boardId}).subscribe(tasks => {
-      this.tasks = _.groupBy(tasks, 'boardColumnId')
-    })
+    this.store.dispatch(loadTasks({boardId: this.boardId}))
   }
 
   viewTask(task: ITask, column: Column) {

@@ -6,7 +6,7 @@ import {DataSource} from "@angular/cdk/collections";
 import {MatTableDataSource} from "@angular/material/table";
 import {ConfirmationPopupComponent} from "../../../../../shared/confirmation-popup/confirmation-popup.component";
 import {MatDialog} from "@angular/material/dialog";
-import {Store} from "@ngrx/store";
+import {select, Store} from "@ngrx/store";
 import {BoardStateModule, deleteBoard, getBoards, loadBoards, ProjectStateModule} from "../../../../../store";
 import {currentProject} from "../../../../../store/project/project.seletors";
 
@@ -34,11 +34,11 @@ export class ProjectBoardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getBoards()
-    this.store.select(currentProject)
-      .pipe(takeUntil(this.sub$))
+    this.store
+      .pipe(select(currentProject),takeUntil(this.sub$))
       .subscribe((project) => {
         if (project) {
-          this.store.dispatch(loadBoards());
+          // this.store.dispatch(loadBoards());
         }
       })
 

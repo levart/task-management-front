@@ -9,7 +9,7 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {UserService} from "../../../../../core/services/user.service";
 import {MatDialog} from "@angular/material/dialog";
 import {UserAddEditComponent} from "../../../../user/components/user-add-edit/user-add-edit.component";
-import {Store} from "@ngrx/store";
+import {select, Store} from "@ngrx/store";
 import {loadProjectUsers, ProjectStateModule, setProjectUsers} from "../../../../../store";
 import {currentProject, projectUsers} from "../../../../../store/project/project.seletors";
 
@@ -50,7 +50,9 @@ export class ProjectUsersComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getProjectUsers()
-    this.store.select(currentProject)
+    this.store.pipe(
+      select(currentProject)
+    )
       .subscribe((project) => {
         console.log(project)
         if (project) {

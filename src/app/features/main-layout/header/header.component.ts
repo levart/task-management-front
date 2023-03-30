@@ -1,17 +1,17 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {AuthFacade} from "../../../facades/auth.service";
 import {ProjectService} from "../../../core/services/project.service";
 import {IProject} from "../../../core/interfaces/project";
-import {ProjectFacade} from "../../../facades/project.facade";
-import {Store} from "@ngrx/store";
-import {initCurrentProject, loadProjects, ProjectStateModule, setProject} from "../../../store";
+import {select, Store} from "@ngrx/store";
+import {initCurrentProject, loadProjects, loadProjectsSuccess, ProjectStateModule, setProject} from "../../../store";
 import {currentProject, projects} from "../../../store/project/project.seletors";
-import {Observable} from "rxjs";
+import {tap} from "rxjs";
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent implements OnInit {
   projects = [];
@@ -27,6 +27,7 @@ export class HeaderComponent implements OnInit {
   constructor(
     private store: Store<{ project: ProjectStateModule }>,
     private authFacade: AuthFacade,
+    private projectService: ProjectService,
   ) {
   }
 
@@ -41,7 +42,7 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
     this.store.dispatch(loadProjects());
     this.store.dispatch(initCurrentProject());
-    this.store.select(currentProject)
+    this.store.pipe(select(currentProject))
       .subscribe((project) => {
         this.currentProject = project;
       })

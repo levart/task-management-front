@@ -2,6 +2,9 @@
   <button mat-raised-button color="primary" (click)="addUser()" [appPermissions]="['user:create']">Add User</button>
 </div>
 
+{{isLoading$ | async}}
+sdfgd
+
 <div class="container">
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
@@ -38,7 +41,7 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
 
-  <mat-paginator [length]="total"
+  <mat-paginator [length]="totalUsers$ | async"
                  [pageSize]="pageSize"
                   [pageIndex]="pageIndex"
                  [pageSizeOptions]="[5, 10, 25, 100]"

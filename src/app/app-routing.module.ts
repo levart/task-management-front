@@ -37,7 +37,7 @@ const routes: Routes = [
       },
       {
         path: 'backlog',
-        loadComponent: () => import('./pages/backlog/backlog.component').then(m => m.BacklogComponent)
+        loadChildren: () => import('./pages/backlog/backlog.module').then(m => m.BacklogModule)
       },
       {
         path: 'access-denied',

@@ -11,11 +11,12 @@ import {ConfirmationPopupComponent} from "../../shared/confirmation-popup/confir
 import {ITask} from "../../core/interfaces/task";
 import {TaskService} from "../../core/services/task.service";
 import {TaskAddEditComponent} from "../../shared/task-add-edit/task-add-edit.component";
+import {Store, StoreModule} from "@ngrx/store";
+import {backlogReducer, BacklogStateModel} from "./store/backlog.reducer";
+import {loadBacklogTasks} from "./store/backlog.actions";
 
 @Component({
   selector: 'app-backlog',
-  standalone: true,
-  imports: [CommonModule, MatButtonModule, RouterModule, MatTableModule, MatDialogModule,],
   templateUrl: './backlog.component.html',
   styleUrls: ['./backlog.component.scss']
 })
@@ -27,6 +28,7 @@ export class BacklogComponent implements OnInit, OnDestroy {
   sub$ = new Subject();
 
   constructor(
+    private store: Store<{backlog: BacklogStateModel}>,
     private taskService: TaskService,
     public dialog: MatDialog,
   ) {
@@ -35,17 +37,15 @@ export class BacklogComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.getIssueTypes();
+    this.store.select((state) => state.backlog)
+      .subscribe((backlog) => {
+        this.dataSource.data = backlog.tasks;
+      })
+    this.loadBacklog()
   }
 
-  getIssueTypes() {
-    this.taskService.getTasks({
-      isBacklog: true
-    })
-      .pipe(takeUntil(this.sub$))
-      .subscribe(boards => {
-        this.dataSource.data = boards;
-      });
+  loadBacklog() {
+    this.store.dispatch(loadBacklogTasks())
   }
 
   addBoard() {
@@ -72,7 +72,7 @@ export class BacklogComponent implements OnInit, OnDestroy {
       )
       .subscribe(result => {
         if (result) {
-          this.getIssueTypes();
+          this.loadBacklog();
         }
       });
   }
@@ -88,7 +88,7 @@ export class BacklogComponent implements OnInit, OnDestroy {
 
     doalogRef.afterClosed().subscribe((task: ITask) => {
       if (task) {
-        this.getIssueTypes()
+        this.loadBacklog()
       }
     })
   }

@@ -8,7 +8,7 @@ export const loadProjects = createAction(
 
 export const loadProjectsSuccess = createAction(
   '[Project] Load Projects Success',
-  props<{ data: any }>()
+  props<{ projects: any }>()
 );
 
 export const loadProjectsFailure = createAction(
@@ -16,14 +16,13 @@ export const loadProjectsFailure = createAction(
   props<{ error: any }>()
 );
 
-
 export const setProject = createAction(
   '[Project] Set Project',
   props<{ projectId: number }>()
 );
 
 export const setProjectSuccess = createAction(
-  '[Project] Set Project',
+  '[Project] Set current Project Success',
   props<{ project: IProject }>()
 );
 
@@ -45,7 +44,7 @@ export const loadProjectUsers = createAction(
 )
 
 export const loadProjectUsersSuccess = createAction(
-  '[Project] Load User Projects success',
+  '[Project] Load User Projects Success',
   props<{users: IUser[]}>()
 )
 

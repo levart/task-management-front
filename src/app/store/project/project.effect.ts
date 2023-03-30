@@ -6,18 +6,24 @@ import {
   initCurrentProject,
   loadProjects,
   loadProjectsFailure,
-  loadProjectsSuccess, loadProjectUsers, loadProjectUsersSuccess, setProject, setProjectUsers, updateProject,
+  loadProjectsSuccess,
+  loadProjectUsers,
+  loadProjectUsersSuccess,
+  setProject,
+  setProjectSuccess,
+  setProjectUsers,
+  updateProject,
 } from "./project.actions";
-import {catchError, map, mergeMap, of, switchMap, tap} from "rxjs";
-import {Selector} from "@ngrx/store";
+import {catchError, exhaustMap, filter, map, mergeMap, of, switchMap, tap, withLatestFrom} from "rxjs";
+import {select, Selector, Store} from "@ngrx/store";
 import {IProject} from "../../core/interfaces/project";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Router} from "@angular/router";
-import {loadBoards} from "../board";
 
 @Injectable()
 export class ProjectEffect {
   constructor(
+    private store: Store,
     private actions$: Actions,
     private projectService: ProjectService,
     private _snackBar: MatSnackBar,
@@ -27,15 +33,15 @@ export class ProjectEffect {
 
   loadProjects$ = createEffect(() => this.actions$.pipe(
     ofType(loadProjects),
-    switchMap(() => this.projectService.getMyProjects().pipe(
-      map((data) => loadProjectsSuccess({data})),
+    exhaustMap(() => this.projectService.getMyProjects().pipe(
+      map((projects) => loadProjectsSuccess({projects})),
       catchError((error) => of(loadProjectsFailure({error})))
     ))
   ))
 
   createProject$ = createEffect(() => this.actions$.pipe(
     ofType(createProject),
-    switchMap((action) => this.projectService.createProject(action.project).pipe(
+    exhaustMap((action) => this.projectService.createProject(action.project).pipe(
       tap((res: IProject) => loadProjects()),
       map((res: IProject) => {
         this._snackBar.open('Project created', 'Close', {
@@ -52,7 +58,7 @@ export class ProjectEffect {
 
   updateProject$ = createEffect(() => this.actions$.pipe(
     ofType(updateProject),
-    switchMap((action) => this.projectService.updateProject(action.project).pipe(
+    exhaustMap((action) => this.projectService.updateProject(action.project).pipe(
       tap((res: IProject) => loadProjects()),
       map((res: IProject) => {
         this._snackBar.open('Project updated', 'Close', {
@@ -68,7 +74,7 @@ export class ProjectEffect {
 
   loadProjectUsers$ = createEffect(() => this.actions$.pipe(
     ofType(loadProjectUsers),
-    switchMap((action) => this.projectService.getProjectUsers().pipe(
+    exhaustMap((action) => this.projectService.getProjectUsers().pipe(
       map((data) => loadProjectUsersSuccess({users: data})),
       catchError((error) => of(loadProjectsFailure({error})))
     ))
@@ -76,11 +82,30 @@ export class ProjectEffect {
 
   setProjectUsers$ = createEffect(() => this.actions$.pipe(
     ofType(setProjectUsers),
-    switchMap((action) => this.projectService.addProjectUser(action).pipe(
+    exhaustMap((action) => this.projectService.addProjectUser(action).pipe(
       // map((data) => loadProjectUsers()),
       catchError((error) => of(loadProjectsFailure({error})))
     ))
   ))
 
+
+  setProject$ = createEffect( () => this.actions$.pipe(
+    ofType(setProject),
+    mergeMap( (action) => {
+      return this.projectService.getProject(action.projectId)
+        .pipe(
+          map( (res) => {
+            return setProjectSuccess({project: res})
+          }),
+        )
+    })
+  ))
+
+  setProjectSuccess$ = createEffect( () => this.actions$.pipe(
+    ofType(setProjectSuccess),
+    tap( (action) => {
+      localStorage.setItem('project', JSON.stringify(action.project))
+    })
+  ), {dispatch: false})
 
 }

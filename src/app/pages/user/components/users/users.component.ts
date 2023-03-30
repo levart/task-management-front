@@ -12,7 +12,8 @@ import {PageEvent} from "@angular/material/paginator";
 import {UserRoleComponent} from "../user-role/user-role.component";
 import {Store} from "@ngrx/store";
 import {UserStateModel} from "../../store/user.reducer";
-import {loadUsers} from "../../store/user.actions";
+import {deleteUser, loadUsers} from "../../store/user.actions";
+import {isLoading, users, userTotal} from "../../store/user.selectors";
 
 @Component({
   selector: 'app-users',
@@ -20,40 +21,42 @@ import {loadUsers} from "../../store/user.actions";
   styleUrls: ['./users.component.scss']
 })
 export class UsersComponent implements OnInit{
+  totalUsers$ = this.store.select(userTotal);
+  isLoading$ = this.store.select(isLoading);
+
   displayedColumns = ['id', 'fullName', 'createdAt', 'actions'];
 
   dataSource = new MatTableDataSource<IUser>();
 
   sub$ = new Subject();
-  pageIndex  = 1;
+  pageIndex  = 0;
   total = 0;
   pageSize = 10;
 
   constructor(
     private store: Store<{user: UserStateModel}>,
-    private userService: UserService,
     public dialog: MatDialog,
   ) {
 
   }
 
   ngOnInit(): void {
-    this.store.dispatch(loadUsers({
-      page: this.pageIndex,
-      limit: this.pageSize
-    }))
-    this.getUsers()
+    this.loadUsers()
+    this.store.select(users)
+      .pipe(
+        takeUntil(this.sub$)
+      )
+      .subscribe((users) => {
+        console.log(users)
+        this.dataSource.data = users;
+      })
   }
 
-  getUsers() {
-    this.userService.getUsers({
-      page: this.pageIndex,
+  loadUsers() {
+    this.store.dispatch(loadUsers({
+      page: this.pageIndex + 1,
       limit: this.pageSize
-    })
-      .subscribe(users => {
-        this.dataSource.data = users.data;
-        this.total = users.totalCount;
-      });
+    }))
   }
 
 
@@ -67,7 +70,7 @@ export class UsersComponent implements OnInit{
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.getUsers();
+        this.loadUsers();
       }
     })
 
@@ -81,22 +84,23 @@ export class UsersComponent implements OnInit{
         takeUntil(this.sub$),
         switchMap((result) => {
           if (result) {
-            return this.userService.deleteUser(id);
+            this.store.dispatch(deleteUser({id}))
+            return of(result)
           }
           return of(null);
         })
       )
       .subscribe(result => {
         if (result) {
-          this.getUsers();
+          this.loadUsers();
         }
       });
   }
 
   pageEvent($event: PageEvent) {
-    this.pageIndex = $event.pageIndex + 1;
+    this.pageIndex = $event.pageIndex;
     this.pageSize = $event.pageSize;
-    this.getUsers()
+    this.loadUsers()
   }
 
   setRole(user: IUser) {
@@ -108,7 +112,7 @@ export class UsersComponent implements OnInit{
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.getUsers();
+        this.loadUsers();
       }
     })
   }
