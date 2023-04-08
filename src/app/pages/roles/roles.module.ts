@@ -7,6 +7,13 @@ import {MatTableModule} from "@angular/material/table";
 import {MatPaginatorModule} from "@angular/material/paginator";
 import { RoleAddEditComponent } from './role-add-edit/role-add-edit.component';
 import { PermissionAddEditComponent } from './permission-add-edit/permission-add-edit.component';
+import {StoreModule} from "@ngrx/store";
+import {roleReducer} from "./store/role/role.reducer";
+import {EffectsModule} from "@ngrx/effects";
+import {RoleEffects} from "./store/role/role.effects";
+import { permissionReducer} from "./store/permission/permission.reducer";
+import {roleReducerMap} from "./store";
+import {PermissionEffects} from "./store/permission/permission.effects";
 
 
 @NgModule({
@@ -27,6 +34,8 @@ import { PermissionAddEditComponent } from './permission-add-edit/permission-add
         component: PermissionAddEditComponent
       }
     ]),
+    StoreModule.forFeature('role', roleReducerMap),
+    EffectsModule.forFeature([RoleEffects, PermissionEffects]),
     MatButtonModule,
     MatTableModule,
     MatPaginatorModule

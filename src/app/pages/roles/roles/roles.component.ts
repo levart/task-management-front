@@ -6,6 +6,10 @@ import {Subject} from "rxjs";
 import {IRole} from "../../../core/interfaces/role";
 import {RoleService} from "../../../core/services/role.service";
 import {PageEvent} from "@angular/material/paginator";
+import {Store} from "@ngrx/store";
+import {RoleStateModel} from "../store/role/role.reducer";
+import {getRoles, getRoleTotal} from "../store/role/role.selectors";
+import {loadRoles} from "../store/role/role.actions";
 
 @Component({
   selector: 'app-roles',
@@ -19,30 +23,33 @@ export class RolesComponent implements OnInit{
 
   sub$ = new Subject();
 
-  pageIndex  = 1;
-  total = 0;
+  pageIndex  = 0;
+  total$ = this.store.select(getRoleTotal);
   pageSize = 10;
 
 
+
   constructor(
-    private roleService: RoleService,
+    private store: Store<{role: RoleStateModel}>,
   ) {
 
   }
 
   ngOnInit(): void {
+
+    this.store.select(getRoles)
+      .pipe()
+      .subscribe(roles => {
+        this.dataSource.data = roles;
+      })
     this.getRoles();
   }
 
   getRoles() {
-    this.roleService.getRoles({
-      page: this.pageIndex,
+    this.store.dispatch(loadRoles({
+      page: this.pageIndex + 1,
       limit: this.pageSize
-    })
-      .subscribe(roles => {
-        this.dataSource.data = roles.data;
-        this.total = roles.totalCount;
-      });
+    }))
   }
 
   addRole(id?: number) {

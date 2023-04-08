@@ -4,6 +4,7 @@ import {boardReducer, BoardStateModule} from "./board";
 import {issueTypesReducer, IssueTypesStateModel} from "./issue-types";
 import {epicReducer, EpicStateModel} from "./epic";
 import {tasksReducer, TasksStateModel} from "./tasks";
+import {authReducer, AuthStateModel} from "./auth";
 
 export * from './project'
 export * from './board'

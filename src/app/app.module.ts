@@ -15,6 +15,7 @@ import { EffectsModule } from '@ngrx/effects';
 import {ProjectEffect, projectReducer} from "./store";
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import {MatSnackBar, MatSnackBarModule} from "@angular/material/snack-bar";
+import {AuthEffects, authReducer} from "./store/auth";
 
 @NgModule({
   declarations: [
@@ -27,8 +28,10 @@ import {MatSnackBar, MatSnackBarModule} from "@angular/material/snack-bar";
     MainLayoutModule,
     BrowserAnimationsModule,
     AccessDeniedComponent,
-    StoreModule.forRoot({}),
-    EffectsModule.forRoot([]),
+    StoreModule.forRoot({
+      auth: authReducer
+    }),
+    EffectsModule.forRoot([AuthEffects]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
     MatSnackBarModule
   ],

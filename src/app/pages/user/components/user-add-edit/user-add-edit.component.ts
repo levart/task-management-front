@@ -3,12 +3,13 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {UserService} from "../../../../core/services/user.service";
 import {UserStateModel} from "../../store/user.reducer";
-import {ActionsSubject, Store} from "@ngrx/store";
+import {ActionsSubject, select, Store} from "@ngrx/store";
 import {getUserById} from "../../store/user.selectors";
 import {createUser, createUserSuccess, loadUsers, updateUser} from "../../store/user.actions";
 import {Actions, ofType} from "@ngrx/effects";
-import {filter} from "rxjs";
+import {filter, switchMap, tap} from "rxjs";
 import {UserEffects} from "../../store/user.effects";
+import {isAuth} from "../../../../store/auth";
 
 @Component({
   selector: 'app-user-add-edit',
@@ -44,13 +45,7 @@ export class UserAddEditComponent implements OnInit {
           this.form.patchValue(res);
         })
     }
-    this.action$
-      .pipe(
-        ofType(createUserSuccess),
-      )
-      .subscribe((res) => {
-        this.dialogRef.close(res);
-      })
+
   }
 
   onSubmit() {

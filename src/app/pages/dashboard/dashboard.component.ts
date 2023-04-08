@@ -3,6 +3,8 @@ import {BoardService} from "../../core/services/board.service";
 import {ActivatedRoute} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {AppState, BoardStateModule, getBoards, loadBoards} from "../../store";
+import {currentProject} from "../../store/project/project.seletors";
+import {of, switchMap} from "rxjs";
 
 @Component({
   selector: 'app-dashboard',
@@ -11,7 +13,16 @@ import {AppState, BoardStateModule, getBoards, loadBoards} from "../../store";
 })
 export class DashboardComponent implements OnInit{
 
-  boards$ = this.store.select(getBoards);
+  currentProject$ = this.store.select(currentProject);
+  boards$ = this.store.select(currentProject)
+    .pipe(
+      switchMap( (project) => {
+        if(project) {
+          return this.store.select(getBoards)
+        }
+        return of([])
+      })
+    );
 
   boardId: number | null = null;
 
@@ -21,9 +32,6 @@ export class DashboardComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    // this.route.url.subscribe(url => {
-    //   console.log(url)
-    // })
     this.store.dispatch(loadBoards())
   }
 

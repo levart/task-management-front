@@ -6,6 +6,7 @@ import {select, Store} from "@ngrx/store";
 import {initCurrentProject, loadProjects, loadProjectsSuccess, ProjectStateModule, setProject} from "../../../store";
 import {currentProject, projects} from "../../../store/project/project.seletors";
 import {tap} from "rxjs";
+import {AuthStateModel, logout} from "../../../store/auth";
 
 @Component({
   selector: 'app-header',
@@ -25,7 +26,7 @@ export class HeaderComponent implements OnInit {
   }
 
   constructor(
-    private store: Store<{ project: ProjectStateModule }>,
+    private store: Store<{ project: ProjectStateModule, auth: AuthStateModel }>,
     private authFacade: AuthFacade,
     private projectService: ProjectService,
   ) {
@@ -33,6 +34,7 @@ export class HeaderComponent implements OnInit {
 
   logout() {
     this.authFacade.logout();
+    this.store.dispatch(logout());
   }
 
   selectProject(projectId: any) {

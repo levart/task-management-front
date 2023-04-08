@@ -3,5 +3,5 @@ export interface IRole {
   createdAt: Date;
   name: string;
   type: string;
-  permissions: string[];
+  permissions: any[];
 }

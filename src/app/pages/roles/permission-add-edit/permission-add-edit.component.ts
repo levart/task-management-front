@@ -1,23 +1,34 @@
-import {Component, OnInit} from '@angular/core';
-import {RoleService} from "../../../core/services/role.service";
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
-import * as _ from 'lodash';
+import {Store} from "@ngrx/store";
+import {RoleState} from "../store";
+import {
+  clearPermissionsByRole,
+  loadPermissions,
+  loadPermissionsByRole,
+  setPermissions
+} from "../store/permission/permission.actions";
+import {getPermissions, getRolePermissions} from "../store/permission/permission.selectors";
 
 @Component({
   selector: 'app-permission-add-edit',
   templateUrl: './permission-add-edit.component.html',
   styleUrls: ['./permission-add-edit.component.scss']
 })
-export class PermissionAddEditComponent implements OnInit {
-  groups: any = [];
+export class PermissionAddEditComponent implements OnInit, OnDestroy {
+  permissionGroups$ = this.store.select(getPermissions);
   roleId!: string
 
   permissions: Set<number> = new Set<number>();
 
   constructor(
-    private roleService: RoleService,
+    private store: Store<RoleState>,
     private route: ActivatedRoute
   ) {
+  }
+
+  ngOnDestroy(): void {
+    this.store.dispatch(clearPermissionsByRole())
   }
 
   ngOnInit(): void {
@@ -27,32 +38,21 @@ export class PermissionAddEditComponent implements OnInit {
         this.getPermissionsByRole()
       }
     })
+
     this.getPermissions()
-  }
 
-  getPermissionsByRole() {
-    this.roleService.getRole(this.roleId)
-      .subscribe(role => {
-        console.log(role)
-        role && role.permissions && role.permissions.length && role.permissions.forEach((p: any) => this.permissions.add(p.id))
-
+    this.store.select(getRolePermissions)
+      .subscribe(permissions => {
+        permissions && permissions.length && permissions.forEach((p: any) => this.permissions.add(p))
       })
   }
 
-  getPermissions() {
-    this.roleService.getPermissions()
-      .subscribe(permissions => {
-        console.log(permissions)
-        const grouped = _.groupBy(permissions, 'groupKey');
-        this.groups = Object.keys(grouped).map(key => {
-          return {
-            key,
-            permissions: grouped[key]
-          }
-        })
+  getPermissionsByRole() {
+    this.store.dispatch(loadPermissionsByRole({roleId: this.roleId}));
+  }
 
-        console.log(this.groups)
-      });
+  getPermissions() {
+    this.store.dispatch(loadPermissions());
   }
 
 
@@ -61,11 +61,6 @@ export class PermissionAddEditComponent implements OnInit {
   }
 
   save() {
-    this.roleService.setPermissions({
-      roleId: this.roleId,
-      permissions: Array.from(this.permissions)
-    }).subscribe(res => {
-      console.log(res)
-    })
+    this.store.dispatch(setPermissions({roleId: this.roleId, permissions: Array.from(this.permissions)}))
   }
 }

@@ -10,14 +10,15 @@
     <ng-container *ngIf="isAuth; else notAuth">
       <button [routerLink]="['/projects/add']">Add project</button>
       <select [ngModel]="currentProject?.id" (ngModelChange)="selectProject($event)">
-        <option *ngFor="let project of projects$ | async" [value]="project.id" >
+        <option *ngFor="let project of projects$ | async" [value]="project.id">
           {{project.name}}
         </option>
       </select>
       <ng-container *ngIf="currentProject">
         <button [routerLink]="['/projects/setting']">Settings</button>
-      <button (click)="logout()">Logout</button>
       </ng-container>
+      <button (click)="logout()">Logout</button>
+
     </ng-container>
     <ng-template #notAuth>
       <button [routerLink]="['/auth']">login</button>

@@ -10,4 +10,5 @@ export interface IToken {
 export interface ILoginPayload {
   user: IUser;
   token: IToken;
+  roles?: string[];
 }

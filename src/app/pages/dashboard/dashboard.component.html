@@ -1,4 +1,5 @@
 <div class="container">
+  <ng-container *ngIf="currentProject$ | async; else noCurrentProject">
   <div class="sidebar">
     <ul>
       <li *ngFor="let board of boards$ |async">
@@ -7,12 +8,13 @@
     </ul>
   </div>
   <div class="content">
-<!--    {{boardId}}-->
-<!--    <div *ngIf="!boardId" class="empty-board">-->
-<!--      <h1>Dashboard</h1>-->
-<!--      <p>Choose a board from the sidebar</p>-->
-<!--    </div>-->
     <router-outlet></router-outlet>
 
   </div>
+  </ng-container>
+
+  <ng-template #noCurrentProject>
+   <h1> გთხოვთ აირჩიოთ პროექტი
+   </h1>
+  </ng-template>
 </div>

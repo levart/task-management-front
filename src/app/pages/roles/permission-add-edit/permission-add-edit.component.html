@@ -1,10 +1,5 @@
-
-<!--<pre>-->
-<!--  {{permissions | json}}-->
-<!--</pre>-->
-
 <div class="container">
-  <div class="group" *ngFor="let group of groups">
+  <div class="group" *ngFor="let group of permissionGroups$ |async">
     <div class="group-name">{{group.key}}</div>
     <div class="permission" *ngFor="let permission of group.permissions">
       <div class="permission-name">{{permission.name}}</div>
