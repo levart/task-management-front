@@ -1,11 +1,14 @@
-import { Injectable } from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
+import {DOCUMENT} from "@angular/common";
 
 @Injectable({
   providedIn: 'root'
 })
 export class CookieService {
 
-  constructor() { }
+  constructor(
+    @Inject(DOCUMENT) private document: Document
+  ) { }
 
   setCookie(name: string, value: string, days: number) {
     let expires = "";
@@ -14,12 +17,12 @@ export class CookieService {
       date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
       expires = "; expires=" + date.toUTCString();
     }
-    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    this.document.cookie = name + "=" + (value || "") + expires + "; path=/";
   }
 
   getCookie(name: string) {
     let nameEQ = name + "=";
-    let ca = document.cookie.split(';');
+    let ca = this.document.cookie.split(';');
     for(let i = 0; i < ca.length; i++) {
       let c = ca[i];
       while (c.charAt(0) == ' ') c = c.substring(1, c.length);
@@ -29,7 +32,7 @@ export class CookieService {
   }
 
   eraseCookie(name: string) {
-    document.cookie = name+'=; Max-Age=-99999999;';
+    this.document.cookie = name+'=; Max-Age=-99999999;';
   }
 
 }

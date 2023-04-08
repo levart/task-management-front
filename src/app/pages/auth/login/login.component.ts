@@ -10,6 +10,7 @@ import {select, Store} from "@ngrx/store";
 import {AuthStateModel, checkLoginSuccess, isAuth, login} from "../../../store/auth";
 import {Actions, ofType} from "@ngrx/effects";
 import {createUserSuccess} from "../../user/store/user.actions";
+import {Meta, Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-login',
@@ -26,7 +27,68 @@ export class LoginComponent implements OnInit{
     private store: Store<{auth: AuthStateModel}>,
     private action$: Actions,
     private router: Router,
+    private titleService: Title,
+    private metaService: Meta
   ) {
+    this.titleService.setTitle('ავტორიზაცია | ჩემი თასქ-მენეჯერი')
+    this.metaService.addTags([
+      {
+        name: 'description',
+        content: 'ჩემი თასქ-მენეჯერი ბექლოგი'
+      },
+      {
+        name: 'keywords',
+        content: 'ბექლოგი, თასქები, თასქ-მენეჯერი'
+      },
+      {
+        name: 'robots',
+        content: 'index, follow'
+      },
+      {
+        name: 'og:title',
+        content: 'ბექლოგი | ჩემი თასქ-მენეჯერი'
+      },
+      {
+        name: 'og:description',
+        content: 'ჩემი თასქ-მენეჯერი ბექლოგი'
+      },
+      {
+        name: 'og:url',
+        content: 'https://task-manager.ge/backlog'
+      },
+      {
+        name: 'og:image',
+        content: 'https://task-manager.ge/assets/images/logo.png'
+      },
+      {
+        name: 'og:type',
+        content: 'website'
+      },
+      {
+        name: 'og:site_name',
+        content: 'ჩემი თასქ-მენეჯერი'
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary'
+      },
+      {
+        name: 'twitter:title',
+        content: 'ბექლოგი | ჩემი თასქ-მენეჯერი'
+      },
+      {
+        name: 'twitter:description',
+        content: 'ჩემი თასქ-მენეჯერი ბექლოგი'
+      },
+      {
+        name: 'twitter:image',
+        content: 'https://task-manager.ge/assets/images/logo.png'
+      },
+      {
+        name: 'twitter:site',
+        content: '@taskmanagerge'
+      }
+    ])
   }
 
   ngOnInit() {

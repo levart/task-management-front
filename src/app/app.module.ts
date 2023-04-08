@@ -22,7 +22,7 @@ import {AuthEffects, authReducer} from "./store/auth";
     AppComponent
   ],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'serverApp' }),
     AppRoutingModule,
     HttpClientModule,
     MainLayoutModule,

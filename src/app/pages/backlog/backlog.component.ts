@@ -1,19 +1,15 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {MatButtonModule} from "@angular/material/button";
-import { RouterModule} from "@angular/router";
-import {MatTableDataSource, MatTableModule} from "@angular/material/table";
-import {IIssueType} from "../../core/interfaces/issue-type";
+import {MatTableDataSource} from "@angular/material/table";
 import {of, Subject, switchMap, takeUntil} from "rxjs";
-import {IssueTypeService} from "../../core/services/issue-type.service";
-import {MatDialog, MatDialogModule} from "@angular/material/dialog";
+import {MatDialog} from "@angular/material/dialog";
 import {ConfirmationPopupComponent} from "../../shared/confirmation-popup/confirmation-popup.component";
 import {ITask} from "../../core/interfaces/task";
 import {TaskService} from "../../core/services/task.service";
 import {TaskAddEditComponent} from "../../shared/task-add-edit/task-add-edit.component";
-import {Store, StoreModule} from "@ngrx/store";
-import {backlogReducer, BacklogStateModel} from "./store/backlog.reducer";
+import {Store} from "@ngrx/store";
+import {BacklogStateModel} from "./store/backlog.reducer";
 import {loadBacklogTasks} from "./store/backlog.actions";
+import {Meta, Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-backlog',
@@ -28,15 +24,76 @@ export class BacklogComponent implements OnInit, OnDestroy {
   sub$ = new Subject();
 
   constructor(
-    private store: Store<{backlog: BacklogStateModel}>,
+    private store: Store<{ backlog: BacklogStateModel }>,
     private taskService: TaskService,
     public dialog: MatDialog,
+    private titleService: Title,
+    private metaService: Meta
   ) {
 
   }
 
 
   ngOnInit(): void {
+    this.titleService.setTitle('Backlog | ჩემი თასქ-მენეჯერი')
+    this.metaService.addTags([
+      {
+        name: 'description',
+        content: 'ჩემი თასქ-მენეჯერი ბექლოგი'
+      },
+      {
+        name: 'keywords',
+        content: 'ბექლოგი, თასქები, თასქ-მენეჯერი'
+      },
+      {
+        name: 'robots',
+        content: 'index, follow'
+      },
+      {
+        name: 'og:title',
+        content: 'ბექლოგი | ჩემი თასქ-მენეჯერი'
+      },
+      {
+        name: 'og:description',
+        content: 'ჩემი თასქ-მენეჯერი ბექლოგი'
+      },
+      {
+        name: 'og:url',
+        content: 'https://task-manager.ge/backlog'
+      },
+      {
+        name: 'og:image',
+        content: 'https://task-manager.ge/assets/images/logo.png'
+      },
+      {
+        name: 'og:type',
+        content: 'website'
+      },
+      {
+        name: 'og:site_name',
+        content: 'ჩემი თასქ-მენეჯერი'
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary'
+      },
+      {
+        name: 'twitter:title',
+        content: 'ბექლოგი | ჩემი თასქ-მენეჯერი'
+      },
+      {
+        name: 'twitter:description',
+        content: 'ჩემი თასქ-მენეჯერი ბექლოგი'
+      },
+      {
+        name: 'twitter:image',
+        content: 'https://task-manager.ge/assets/images/logo.png'
+      },
+      {
+        name: 'twitter:site',
+        content: '@taskmanagerge'
+      }
+    ])
     this.store.select((state) => state.backlog)
       .subscribe((backlog) => {
         this.dataSource.data = backlog.tasks;
@@ -78,7 +135,7 @@ export class BacklogComponent implements OnInit, OnDestroy {
   }
 
   addTask(taskId?: number) {
-    const  doalogRef = this.dialog.open(TaskAddEditComponent, {
+    const doalogRef = this.dialog.open(TaskAddEditComponent, {
       width: '1000px',
       data: {
         isBacklog: true,
